@@ -1,0 +1,25 @@
+{
+  "name": "employeetracker",
+  "version": "1.0.0",
+  "description": "command line application to view and manage the departments, roles, and employees in my company",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lonewolfco/employeetracker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lonewolfco/employeetracker/issues"
+  },
+  "homepage": "https://github.com/lonewolfco/employeetracker#readme",
+  "dependencies": {
+    "inquirer": "^8.2.0",
+    "mysql": "^2.18.1",
+    "node": "^17.4.0"
+  }
+}
