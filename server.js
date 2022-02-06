@@ -170,8 +170,16 @@ async function viewRoles () {
 
 
 // View Employees Per Department
-function departmentEmployees () {
+async function departmentEmployees () {
+    const employeeData = await db.query ('SELECT employee.first_name, employee.last_name, department.department_name AS department FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id');
+    console.log(chalk.yellowBright.bold(`====================================================================================`));
+    console.log(`                              ` + chalk.cyanBright.bold.inverse('Employees By Department'));
+    console.log(chalk.yellowBright.bold(`====================================================================================`));
 
+    console.table(employeeData);
+
+    console.log(chalk.yellowBright.bold(`====================================================================================`));
+    homepage();
 };
 
 
