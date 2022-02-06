@@ -202,71 +202,8 @@ const addDepartment =  () => {
     });
 };
 
-    // INSERT INTO (department)
-    //     VALUES (id, department_name)
-    //         ()
 
-
-//------ add a role (requires id from department)
-// const addRole = () => {
-//     const deptSql = ('SELECT * FROM department');
-//     db.query(deptSql, (error, response) => {
-//         if (error) throw error;
-//         let deptArray = [];
-//         response.forEach((department) => {deptArray.push(department.department_name);});
-//         deptArray.push('None of These --> Add New Department')
-//         inquirer.prompt([
-//             {
-//                 type: 'list',
-//                 name: 'departmentName',
-//                 message: "Select What Department the Role Works In:",
-//                 choices: deptArray
-//             }
-//         ])
-//         .then((answer) => {
-//             if (answer.departmentName === 'None of These --> Add New Department') {
-//                 this.addDepartment();
-//             } else {
-//                 continueAddRole ();
-//             }
-//         });
-
-//         const continueAddRole = (deptInfo) => {
-//             inquirer.prompt([
-//                 {
-//                     name: 'title',
-//                     type: 'input',
-//                     message: 'Enter New Job Role Title:'
-//                 },
-//                 {
-//                     name: 'salary',
-//                     type: 'input',
-//                     message: 'Enter the Salary for this Job Role'
-//                 }
-//             ])
-
-//             .then((answer) => {
-//             // let roleTitle = answer.title;
-//             let departmentId;
-
-//             response.forEach((department) => {
-//               if (deptInfo.departmentName === department.department_name) {departmentId = department.id;}
-//             });
-
-//             let newRoleSql =   ('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)');
-//             let roleAnswers = [answer.title, answer.salary, departmentId];
-
-//             connection.promise().query(newRoleSql, roleAnswers, (error) => {
-//               if (error) throw error;
-//               console.log('NEW ROLE ADDED!');
-//               viewRoles();
-//             });
-//         });
-//     };
-    
-//     });
-
-// };
+// --------------- ADD ROLE ------------------
 
 const addRole = () => {
     inquirer.prompt([
@@ -314,18 +251,7 @@ const addRole = () => {
     });
 };
 
-    // What is the title of the role?
-
-    // What salary does this role make?
-
-    // What department does this role belong to?
-         // SELECT the existing deptartments out for the department table
-            // .map() the results from department table to question data for inquirer
-            // THEN prompt the user via inquirer for the department information
-            // Take the user's answers and go insert them into the role table via the department id
-
-
-//------ add an employee (requires role id)
+//------ ADD EMPLOYEE --------------
 const addEmployee =  () => {
     inquirer.prompt([
         {
@@ -389,46 +315,132 @@ const addEmployee =  () => {
         });
 };
 
-    // What is the employees first name?
- 
-    // What is the employees last name?
 
-    // What is the employees role?
-        // SELECT the existing roles out for the roles table
-            // .map() the results from roles to question data for inquirer
-            // THEN prompt the user via inquirer for the role information
-            // Take the user's answers and go insert them into the employee table via the role id
+// ============ UPDATE statements =======================
 
-     // Who is the employees manager?
-
-// ====== UPDATE statements
-
-// update Employee Role
+// ------------    update Employee Role ---------------
 function updateEmployeerole () {
 
 };
 
-// update Employee Manager
+// -------------    update Employee Manager -------------
 function updateEmployeeManager () {
 
 };
 
 
-// ========DELETE STATEMENTS=========
+// ============= DELETE STATEMENTS ========================
 
-// Delete Department
-function deleteDepartment () {
+// ------------ Delete Department ---------------
+const deleteDepartment = () =>  {
+    let sql =   ('SELECT department.id, department.department_name FROM department');
+    db.query(sql, (error, response) => {
+      if (error) throw error;
+      let deptArray = [];
+      response.forEach((department) => {deptArray.push(department.department_name);});
 
+      inquirer.prompt([
+          {
+            name: 'deptChoice',
+            type: 'list',
+            message: '🗑️ Select a Department to Delete',
+            choices: deptArray
+          }
+        ])
+        .then((answer) => {
+          let departmentId;
+
+          response.forEach((department) => {
+            if (answer.deptChoice === department.department_name) {
+              departmentId = department.id;
+            }
+          });
+
+          let sql = ('DELETE FROM department WHERE department.id = ?');
+          db.query(sql, [departmentId], (error) => {
+            if (error) throw error;
+            console.log(chalk.redBright.bold.inverse('🚫 Department Successfully Deleted'));
+            viewDepartments();
+          });
+        });
+    });
 };
 
-// Delete Employee
-function deleteEmployee () {
 
+
+// ------------- Delete Employee ----------------
+
+    const deleteEmployee = () => {
+        let sql =   ('SELECT employee.id, employee.first_name, employee.last_name FROM employee');
+    
+        db.query(sql, (error, response) => {
+          if (error) throw error;
+          let employeeArray = [];
+          response.forEach((employee) => {employeeArray.push(`${employee.first_name} ${employee.last_name}`);});
+    
+          inquirer.prompt([
+              {
+                name: 'employeeChoice',
+                type: 'list',
+                message: '🗑️ Select an Employee to Delete',
+                choices: employeeArray
+              }
+            ])
+            .then((answer) => {
+              let employeeId;
+    
+              response.forEach((employee) => {
+                if (
+                  answer.employeeChoice ===
+                  `${employee.first_name} ${employee.last_name}`
+                ) {
+                  employeeId = employee.id;
+                }
+              });
+    
+              let sql = ('DELETE FROM employee WHERE employee.id = ?');
+              db.query(sql, [employeeId], (error) => {
+                if (error) throw error;
+                console.log(chalk.redBright.bold.inverse('🚫 Employee Successfully Deleted'));
+                viewEmployees();
+              });
+            });
+        });
+      };
+
+
+// -------------- Delete Role -----------------
+const deleteRole = () =>  {
+    let sql =   ('SELECT roles.id, roles.title, roles.salary FROM roles');
+    db.query(sql, (error, response) => {
+      if (error) throw error;
+      let rolesArray = [];
+      response.forEach((roles) => {rolesArray.push(roles.title);});
+
+      inquirer.prompt([
+          {
+            name: 'roleChoice',
+            type: 'list',
+            message: '🗑️ Select a Role to Delete',
+            choices: rolesArray
+          }
+        ])
+        .then((answer) => {
+          let roleId;
+
+          response.forEach((roles) => {
+            if (answer.roleChoice === roles.title) {
+              roleId = roles.id;
+            }
+          });
+
+          let sql = ('DELETE FROM roles WHERE roles.id = ?');
+          db.query(sql, [roleId], (error) => {
+            if (error) throw error;
+            console.log(chalk.redBright.bold.inverse('🚫 Role Successfully Deleted'));
+            viewRoles();
+          });
+        });
+    });
 };
 
-// Delete Role
-function deleteRole () {
-
-};
-
-// prompt ();
