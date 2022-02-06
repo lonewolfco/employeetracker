@@ -7,8 +7,7 @@ const chalk = require('chalk');
 const figlet = require('figlet');
 const { async } = require('rxjs');
 const { title } = require('process');
-// const { result } = require('lodash');
-// const { error } = require('console');
+
 
  
 // CHALK STARTER TITLE 
@@ -22,12 +21,7 @@ db.connect((error) => {
     console.log(``);
     console.log(chalk.cyanBright.bold.inverse(`====================================================================================`));
     homepage();
-    
-    // db.query('SELECT * FROM employee')
-    //     .then((results) => {
-    //         console.table(results);
-    //     })
-        
+
   });
 
 
@@ -118,7 +112,7 @@ const homepage = () => {
     });
 };
 
-// db.query('SELECT * FROM employees');
+
 
 // =========================== VIEW: SELECT STATEMENTS =======================
 
@@ -128,7 +122,7 @@ const homepage = () => {
 async function viewDepartments () {
     const departments = await db.query( 'SELECT * FROM department' );
     console.log(chalk.greenBright.bold(`====================================================================================`));
-    console.log(`                              ` + chalk.cyanBright.bold.inverse(`All Departments:`));
+    console.log(`                              ` + chalk.cyanBright.bold.inverse(`Departments`));
     console.log(chalk.greenBright.bold(`====================================================================================`));
 
     console.table(departments);
@@ -143,7 +137,7 @@ async function viewDepartments () {
     async function viewEmployees () {
         const employees = await db.query( 'SELECT * FROM employee' );
         console.log(chalk.yellowBright.bold(`====================================================================================`));
-        console.log(`                              ` + chalk.cyanBright.bold.inverse(`All Departments:`));
+        console.log(`                              ` + chalk.cyanBright.bold.inverse(`Employees`));
         console.log(chalk.yellowBright.bold(`====================================================================================`));
     
         console.table(employees);
@@ -158,7 +152,7 @@ async function viewDepartments () {
 async function viewRoles () {
     const roles = await db.query ( 'SELECT * FROM roles');
     console.log(chalk.red.bold(`====================================================================================`));
-    console.log(`                              ` + chalk.cyanBright.bold.inverse(`All Departments:`));
+    console.log(`                              ` + chalk.cyanBright.bold.inverse(`Job Roles`));
     console.log(chalk.red.bold(`====================================================================================`));
 
     console.table(roles);
@@ -212,7 +206,9 @@ const addDepartment =  () => {
         let departmentSql = ('INSERT INTO department (department_name) VALUES (?)');
         db.query(departmentSql, answer.department_name, (error, response) => {
             if (error) throw error;
+            console.log(chalk.black.bold.inverse(`====================================================================================`));
             console.log(chalk.greenBright.bold.inverse('✅  Department Successfully Added'));
+            console.log(chalk.black.bold.inverse(`====================================================================================`));
             homepage();
         });
     });
@@ -258,7 +254,10 @@ const addRole = () => {
             const sql = ('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)');
             db.query(sql, roleAnswers, (error) => {
                 if (error) throw error;
+                console.log(chalk.black.bold.inverse(`====================================================================================`));
                 console.log(chalk.greenBright.bold.inverse('✅  Role Successfully Added'));
+                console.log(chalk.black.bold.inverse(`====================================================================================`));
+
                 homepage();
             });
         });
@@ -320,8 +319,10 @@ const addEmployee =  () => {
                             answers.push(manager);
                             const sql = ('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)');
                             db.query( sql, answers, (error) => {
-                                if (error) throw error;
+                                if (error) throw error;            
+                                console.log(chalk.black.bold.inverse(`====================================================================================`));
                                 console.log(chalk.greenBright.bold.inverse('✅  Employee Successfully Added'));
+                                console.log(chalk.black.bold.inverse(`====================================================================================`));
                                 homepage();
                             });
                         });
@@ -383,7 +384,9 @@ const updateEmployeerole = () => {
             let sqls =   ('UPDATE employee SET employee.role_id = ? WHERE employee.id = ?');
             db.query(sqls,[newTitle, employeeId], (error) => {
                 if (error) throw error;
+                console.log(chalk.black.bold.inverse(`====================================================================================`));
                 console.log(chalk.greenBright.bold.inverse('✅  Employee Record Successfully Updated'));
+                console.log(chalk.black.bold.inverse(`====================================================================================`));
                 homepage();
               }
             );
@@ -438,8 +441,9 @@ const updateEmployeeManager = () => {
 
             db.query(sql, [managerId, employeeId], (error) => {
                 if (error) throw error;
-
+                console.log(chalk.black.bold.inverse(`====================================================================================`));
                 console.log(chalk.greenBright.bold.inverse('✅  Employee Record Successfully Updated'));
+                console.log(chalk.black.bold.inverse(`====================================================================================`));
                 homepage();
             }
             );
@@ -479,7 +483,9 @@ const deleteDepartment = () =>  {
           let sql = ('DELETE FROM department WHERE department.id = ?');
           db.query(sql, [departmentId], (error) => {
             if (error) throw error;
+            console.log(chalk.black.bold.inverse(`====================================================================================`));
             console.log(chalk.redBright.bold.inverse('🚫 Department Successfully Deleted'));
+            console.log(chalk.black.bold.inverse(`====================================================================================`));
             homepage();
           });
         });
@@ -521,7 +527,9 @@ const deleteDepartment = () =>  {
               let sql = ('DELETE FROM employee WHERE employee.id = ?');
               db.query(sql, [employeeId], (error) => {
                 if (error) throw error;
+                console.log(chalk.black.bold.inverse(`====================================================================================`));
                 console.log(chalk.redBright.bold.inverse('🚫 Employee Successfully Deleted'));
+                console.log(chalk.black.bold.inverse(`====================================================================================`));
                 homepage();
               });
             });
@@ -557,7 +565,9 @@ const deleteRole = () =>  {
           let sql = ('DELETE FROM roles WHERE roles.id = ?');
           db.query(sql, [roleId], (error) => {
             if (error) throw error;
+            console.log(chalk.black.bold.inverse(`====================================================================================`));
             console.log(chalk.redBright.bold.inverse('🚫 Role Successfully Deleted'));
+            console.log(chalk.black.bold.inverse(`====================================================================================`));
             homepage();
           });
         });
