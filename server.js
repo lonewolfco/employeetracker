@@ -134,7 +134,7 @@ async function viewDepartments () {
     console.table(departments);
 
     console.log(chalk.greenBright.bold(`====================================================================================`));
-
+    homepage();
 };
 
 
@@ -149,7 +149,7 @@ async function viewDepartments () {
         console.table(employees);
 
         console.log(chalk.yellowBright.bold(`====================================================================================`));
-
+        homepage();
     };
 
 
@@ -164,7 +164,7 @@ async function viewRoles () {
     console.table(roles);
 
     console.log(chalk.red.bold(`====================================================================================`));
-
+    homepage();
 };
 
 
@@ -196,8 +196,8 @@ const addDepartment =  () => {
         let departmentSql = ('INSERT INTO department (department_name) VALUES (?)');
         db.query(departmentSql, answer.department_name, (error, response) => {
             if (error) throw error;
-            console.log('NEW DEPARTMENT ADDED');
-            viewDepartments();
+            console.log(chalk.greenBright.bold.inverse('✅  Department Successfully Added'));
+            homepage();
         });
     });
 };
@@ -242,8 +242,8 @@ const addRole = () => {
             const sql = ('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)');
             db.query(sql, roleAnswers, (error) => {
                 if (error) throw error;
-                console.log ('NEW ROLE ADDED');
-                viewRoles();
+                console.log(chalk.greenBright.bold.inverse('✅  Role Successfully Added'));
+                homepage();
             });
         });
     });
@@ -305,8 +305,8 @@ const addEmployee =  () => {
                             const sql = ('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)');
                             db.query( sql, answers, (error) => {
                                 if (error) throw error;
-                                console.log('New Employee Added!');
-                                viewEmployees();
+                                console.log(chalk.greenBright.bold.inverse('✅  Employee Successfully Added'));
+                                homepage();
                             });
                         });
                     });
@@ -319,13 +319,117 @@ const addEmployee =  () => {
 // ============ UPDATE statements =======================
 
 // ------------    update Employee Role ---------------
-function updateEmployeerole () {
+const updateEmployeerole = () => {
+    let sql =  ('SELECT employee.id, employee.first_name, employee.last_name, roles.id AS "role_id" FROM employee, roles, department WHERE department.id = roles.department_id AND roles.id = employee.role_id');
+    db.query(sql, (error, response) => {
+      if (error) throw error;
+      let employeeArray = [];
+      response.forEach((employee) => {employeeArray.push(`${employee.first_name} ${employee.last_name}`);});
 
+      let sql = ('SELECT roles.id, roles.title FROM roles');
+      db.query(sql, (error, response) => {
+        if (error) throw error;
+        let rolesArray = [];
+        response.forEach((roles) => {rolesArray.push(roles.title);});
+
+        inquirer.prompt([
+            {
+              name: 'employeeChoice',
+              type: 'list',
+              message: 'Select an Employee to Update their Job Role:',
+              choices: employeeArray
+            },
+            {
+              name: 'roleChoice',
+              type: 'list',
+              message: 'Select new Job Role',
+              choices: rolesArray
+            }
+          ])
+          .then((answer) => {
+            let newTitle, employeeId;
+
+            response.forEach((roles) => {
+              if (answer.roleChoice === roles.title) {
+                newTitle = roles.id;
+              }
+            });
+
+            response.forEach((employee) => {
+              if (
+                answer.employeeChoice ===
+                `${employee.first_name} ${employee.last_name}`
+              ) {
+                employeeId = employee.id;
+              }
+            });
+
+            let sqls =   ('UPDATE employee SET employee.role_id = ? WHERE employee.id = ?');
+            db.query(sqls,[newTitle, employeeId], (error) => {
+                if (error) throw error;
+                console.log(chalk.greenBright.bold.inverse('✅  Employee Record Successfully Updated'));
+                homepage();
+              }
+            );
+          });
+      });
+    });
 };
 
 // -------------    update Employee Manager -------------
-function updateEmployeeManager () {
+const updateEmployeeManager = () => {
+    let sql = ('SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id FROM employee');
+     db.query(sql, (error, response) => {
+         if (error) throw error;
+      let employeeArray = [];
+      response.forEach((employee) => {employeeArray.push(`${employee.first_name} ${employee.last_name}`);});
 
+      inquirer.prompt([
+          {
+            name: 'employeeChoice',
+            type: 'list',
+            message: 'Select an Employee to Update their Reporting Manager:',
+            choices: employeeArray
+          },
+          {
+            name: 'manager',
+            type: 'list',
+            message: 'Select an Employee as their new Reporting Manager',
+            choices: employeeArray
+          }
+        ])
+        .then((answer) => {
+          let employeeId, managerId;
+          response.forEach((employee) => {
+            if (
+              answer.employeeChoice === `${employee.first_name} ${employee.last_name}`
+            ) {
+              employeeId = employee.id;
+            }
+
+            if (
+              answer.manager === `${employee.first_name} ${employee.last_name}`
+            ) {
+              managerId = employee.id;
+            }
+          });
+
+        //   if (validate.isSame(answer.employeeChoice, answer.manager)) {
+        //     console.log(chalk.redBright.inverse((' 🚫  Same Manager Selected -- Please Select New Manager 🚫 ')));
+        //     homepage();
+        //   } else {
+            let sql = ('UPDATE employee SET employee.manager_id = ? WHERE employee.id = ?');
+
+            db.query(sql, [managerId, employeeId], (error) => {
+                if (error) throw error;
+
+                console.log(chalk.greenBright.bold.inverse('✅  Employee Record Successfully Updated'));
+                homepage();
+            }
+            );
+          
+        });
+    });
 };
 
 
@@ -360,7 +464,7 @@ const deleteDepartment = () =>  {
           db.query(sql, [departmentId], (error) => {
             if (error) throw error;
             console.log(chalk.redBright.bold.inverse('🚫 Department Successfully Deleted'));
-            viewDepartments();
+            homepage();
           });
         });
     });
@@ -402,7 +506,7 @@ const deleteDepartment = () =>  {
               db.query(sql, [employeeId], (error) => {
                 if (error) throw error;
                 console.log(chalk.redBright.bold.inverse('🚫 Employee Successfully Deleted'));
-                viewEmployees();
+                homepage();
               });
             });
         });
@@ -438,7 +542,7 @@ const deleteRole = () =>  {
           db.query(sql, [roleId], (error) => {
             if (error) throw error;
             console.log(chalk.redBright.bold.inverse('🚫 Role Successfully Deleted'));
-            viewRoles();
+            homepage();
           });
         });
     });

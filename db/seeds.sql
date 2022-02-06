@@ -17,7 +17,7 @@ INSERT INTO roles (title, salary, department_id)
         ("Support Engineer", 110000, 2);
 
 
-INSERT INTO employee (first_name, last_name)
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
     VALUES
-        ("Lo", "Selby"),
-        ("Mesa", "Awroo");
+        ("Lo", "Selby", 1, 1),
+        ("Mesa", "Awroo", 2, 1);
