@@ -2,7 +2,7 @@
   "name": "employeetracker",
   "version": "1.0.0",
   "description": "command line application to view and manage the departments, roles, and employees in my company",
-  "main": "server.js",
+  "exports": "./server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/lonewolfco/employeetracker#readme",
   "dependencies": {
+    "chalk": "^2.4.1",
     "console.table": "^0.10.0",
+    "figlet": "^1.5.2",
     "inquirer": "^8.2.0",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
