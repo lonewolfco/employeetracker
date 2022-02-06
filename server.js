@@ -184,8 +184,16 @@ async function departmentEmployees () {
 
 
 // view Department Budgets
-function departmentBudget () {
+async function departmentBudget () {
+    const budgetData = await db.query ('SELECT department_id AS id, department.department_name AS department, SUM(salary) AS budget FROM roles INNER JOIN department ON roles.department_id = department.id GROUP BY roles.department_id');
+    console.log(chalk.green.bold(`====================================================================================`));
+    console.log(`                              ` + chalk.greenBright.bold.inverse('Department Budget Data'));
+    console.log(chalk.green.bold(`====================================================================================`));
 
+    console.table(budgetData);
+
+    console.log(chalk.green.bold(`====================================================================================`));
+    homepage();
 };
 
 
