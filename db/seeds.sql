@@ -15,3 +15,9 @@ INSERT INTO roles (title, salary, department_id)
     VALUES
         ("Success Department Manager", 70000, 6),
         ("Support Engineer", 110000, 2);
+
+
+INSERT INTO employee (first_name, last_name)
+    VALUES
+        ("Lo", "Selby"),
+        ("Mesa", "Awroo");
